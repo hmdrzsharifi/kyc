@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
     const match = await argon2.verify(user.password, password);
     if (!match) return res.status(400).json({ error: 'Invalid credentials' });
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, 'SECRET_KEY');
+    const token = jwt.sign({ userId: user._id, role: user.role }, 'SECRET_KEY' ,{ expiresIn: '1h' });
     res.json({ token, role: user.role });
 });
 
