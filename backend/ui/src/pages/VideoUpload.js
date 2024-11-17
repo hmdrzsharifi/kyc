@@ -111,7 +111,7 @@ const VideoUpload = () => {
             formData.append('video', videoBlob, 'recorded-video.webm');
             formData.append('document_id', 'DOCUMENT_ID'); // مقدار مناسب را جایگزین کنید
 
-            const res = await axios.post('http://localhost:5000/api/kyc/upload-video', formData, {
+            const res = await axios.post('http://172.31.13.30:5000/api/kyc/upload-video', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`, // اگر توکن لازم است

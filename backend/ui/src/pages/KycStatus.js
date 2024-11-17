@@ -9,7 +9,7 @@ const KycStatus = () => {
         const fetchStatus = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/api/kyc/status', {
+                const response = await axios.get('http://172.31.13.30:5000/api/kyc/status', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

@@ -16,7 +16,7 @@ const KYCPendingUsers = () => {
         const fetchPendingUsers = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:5000/api/admin/kyc-pending', {
+                const response = await axios.get('http://172.31.13.30:5000/api/admin/kyc-pending', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

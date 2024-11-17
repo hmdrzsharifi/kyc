@@ -11,7 +11,7 @@ const Register = () => {
 
     const handleRegister = async () => {
         try {
-            await axios.post('http://localhost:5000/api/auth/register', { email, password });
+            await axios.post('http://172.31.13.30:5000/api/auth/register', { email, password });
             navigate('/login'); // هدایت به صفحه لاگین
         } catch (err) {
             setError('User already exists');

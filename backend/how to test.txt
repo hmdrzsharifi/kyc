@@ -1,0 +1,8 @@
+1-chrome://flags/#unsafely-treat-insecure-origin-as-secure
+
+
+
+- Insecure origins treated as secure set => Enabled
+set -> http://172.31.13.30:5000
+
+relaunch chrome

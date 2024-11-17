@@ -36,7 +36,7 @@ const KycUpload = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/kyc/upload-documents', formData, {
+            await axios.post('http://172.31.13.30:5000/api/kyc/upload-documents', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
