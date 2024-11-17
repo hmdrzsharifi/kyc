@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, Link } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ const Register = () => {
     const handleRegister = async () => {
         try {
             await axios.post('http://localhost:5000/api/auth/register', { email, password });
-            navigate('/login');
+            navigate('/login'); // هدایت به صفحه لاگین
         } catch (err) {
             setError('User already exists');
         }
@@ -43,6 +43,19 @@ const Register = () => {
                 <Button variant="contained" color="primary" onClick={handleRegister}>
                     Register
                 </Button>
+
+                {/* متن راهنما برای کاربر */}
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                    If you already have an account?{' '}
+                    <Link
+                        component="button"
+                        variant="body2"
+                        onClick={() => navigate('/login')} // هدایت به صفحه لاگین
+                        sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+                    >
+                        Login
+                    </Link>
+                </Typography>
             </Box>
         </Container>
     );

@@ -16,7 +16,19 @@ const DocumentSchema = new mongoose.Schema({
     verification_status: { type: String, default: 'pending' }, // pending, under_review, verified, rejected
     reviewed_by: { type: String },
     reviewed_at: { type: Date },
-    rejection_reason: { type: String }
+    rejection_reason: { type: String },
+    video: {
+        type: {
+            type: String, // نوع ویدیو، مثل "video/webm"
+        },
+        url: {
+            type: String, // مسیر یا آدرس ویدیو
+        },
+        uploaded_at: {
+            type: Date, // تاریخ آپلود
+            default: Date.now,
+        },
+    },
 });
 
 module.exports = mongoose.model('KycDocument', DocumentSchema);

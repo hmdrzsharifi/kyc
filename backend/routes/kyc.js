@@ -15,6 +15,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const videoStorage = multer.diskStorage({
+    destination: './uploads/videos/',
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const videoUpload = multer({ storage: videoStorage });
+
+
 // Upload KYC Documents
 router.post('/upload-documents', authenticateToken, upload.array('documents'), async (req, res) => {
     const userId = req.user.userId;
@@ -30,7 +39,8 @@ router.post('/upload-documents', authenticateToken, upload.array('documents'), a
         document_number,
         expiration_date,
         issued_country,
-        document_images
+        document_images ,
+        video: { url: null, type: null, uploaded_at: null }
     });
 
     try {
@@ -50,6 +60,36 @@ router.get('/status', authenticateToken, async (req, res) => {
         res.json({ kyc_status: user.kyc_status });
     } catch (err) {
         res.status(500).json({ error: 'Failed to get KYC status' });
+    }
+});
+
+
+
+// Upload Video to KYC Document
+router.post('/upload-video', authenticateToken, videoUpload.single('video'), async (req, res) => {
+    const userId = req.user.userId;
+    const { document_id } = req.body;
+
+    try {
+        // پیدا کردن داکیومنت مرتبط با کاربر و ID
+        const kycDocument = await KycDocument.findOne({ user_id: userId });
+
+        if (!kycDocument) {
+            return res.status(404).json({ error: 'Document not found for this user' });
+        }
+
+        // ذخیره آدرس ویدیو در داکیومنت
+        kycDocument.video = {
+            type: req.file.mimetype,
+            url: req.file.path,
+            uploaded_at: new Date()
+        };
+
+        await kycDocument.save();
+        res.json({ message: 'Video uploaded successfully', document: kycDocument });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to upload video' });
     }
 });
 

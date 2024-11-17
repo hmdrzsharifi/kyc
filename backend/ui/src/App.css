@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-image: url('/public/fine jewelry.png'); /* مسیر تصویر پس‌زمینه */
+  background-size: cover; /* اندازه‌ی تصویر را مطابق اندازه صفحه تنظیم می‌کند */
+  background-position: center center; /* تصویر را در وسط صفحه قرار می‌دهد */
+  background-attachment: fixed; /* تصویر پس‌زمینه را ثابت نگه می‌دارد */
+  margin: 0; /* حذف حاشیه‌های پیش‌فرض */
+  height: 100vh; /* ارتفاع صفحه را به اندازه صفحه تنظیم می‌کند */
+}

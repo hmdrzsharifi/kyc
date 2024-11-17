@@ -42,6 +42,7 @@ const KycUpload = () => {
                 },
             });
             alert('Documents uploaded successfully');
+            setError('')
 
             // پاک کردن فایل‌ها و فیلدها بعد از آپلود موفق
             setDocumentType('');

@@ -1,66 +1,90 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Typography, Box } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
 
-// تم شخصی‌سازی شده
 const theme = createTheme({
     palette: {
-        primary: {
-            main: '#1976d2',
-        },
-        secondary: {
-            main: '#dc004e',
-        },
+        primary: { main: '#1976d2' },
+        secondary: { main: '#dc004e' },
     },
-    typography: {
-        fontFamily: 'Roboto, sans-serif',
-    },
+    typography: { fontFamily: 'Roboto, sans-serif' },
 });
 
 const VideoUpload = () => {
     const [videoUrl, setVideoUrl] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
+    const [countdown, setCountdown] = useState(0);
     const [error, setError] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+    const [randomMessage, setRandomMessage] = useState(''); // برای ذخیره پیام رندوم
     const mediaRecorderRef = useRef(null);
     const videoChunks = useRef([]);
     const videoElementRef = useRef(null);
     const streamRef = useRef(null);
 
+    const randomMessages = [
+        "Let's capture this moment!",
+        "Ready to record your video.",
+        "Say cheese and start recording!",
+        "Lights, camera, action!",
+    ];
+
     useEffect(() => {
         return () => {
             if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
+                streamRef.current.getTracks().forEach((track) => track.stop());
             }
         };
     }, []);
 
-    const handleStartRecording = () => {
+    const startRecording = () => {
         setVideoUrl(null);
         setIsRecording(true);
 
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then((stream) => {
-                streamRef.current = stream;
-                if (videoElementRef.current) {
-                    videoElementRef.current.srcObject = stream;
-                }
+        // Check if mediaDevices is available
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    streamRef.current = stream;
+                    if (videoElementRef.current) {
+                        videoElementRef.current.srcObject = stream;
+                    }
 
-                mediaRecorderRef.current = new MediaRecorder(stream);
-                mediaRecorderRef.current.ondataavailable = (event) => {
-                    videoChunks.current.push(event.data);
-                };
-                mediaRecorderRef.current.onstop = () => {
-                    const videoBlob = new Blob(videoChunks.current, { type: 'video/webm' });
-                    const videoUrl = URL.createObjectURL(videoBlob);
-                    setVideoUrl(videoUrl);
-                    videoChunks.current = [];
-                };
-                mediaRecorderRef.current.start();
-            })
-            .catch((err) => {
-                setError("Error accessing media devices: " + err.message);
-                setIsRecording(false);
+                    mediaRecorderRef.current = new MediaRecorder(stream);
+                    mediaRecorderRef.current.ondataavailable = (event) => {
+                        videoChunks.current.push(event.data);
+                    };
+                    mediaRecorderRef.current.onstop = () => {
+                        const videoBlob = new Blob(videoChunks.current, { type: 'video/webm' });
+                        const videoUrl = URL.createObjectURL(videoBlob);
+                        setVideoUrl(videoUrl);
+                        videoChunks.current = [];
+                    };
+                    mediaRecorderRef.current.start();
+                })
+                .catch((err) => {
+                    setError('Error accessing media devices: ' + err.message);
+                    setIsRecording(false);
+                });
+        } else {
+            setError('Your browser does not support media devices');
+            setIsRecording(false);
+        }
+    };
+
+    const handleStartRecording = () => {
+        setCountdown(3);
+        setRandomMessage(randomMessages[Math.floor(Math.random() * randomMessages.length)]); // انتخاب پیام رندوم
+        const countdownInterval = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev === 1) {
+                    clearInterval(countdownInterval);
+                    startRecording();
+                }
+                return prev - 1;
             });
+        }, 1000);
     };
 
     const handleStopRecording = () => {
@@ -71,9 +95,40 @@ const VideoUpload = () => {
         }
     };
 
-    const handleRecordAgain = () => {
-        setVideoUrl(null);
-        setIsRecording(false);
+    const handleUpload = async () => {
+        if (!videoUrl) {
+            setError('No video to upload');
+            return;
+        }
+        setIsUploading(true);
+        setError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(videoUrl);
+            const videoBlob = await response.blob();
+            const formData = new FormData();
+            formData.append('video', videoBlob, 'recorded-video.webm');
+            formData.append('document_id', 'DOCUMENT_ID'); // مقدار مناسب را جایگزین کنید
+
+            const res = await axios.post('http://localhost:5000/api/kyc/upload-video', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`, // اگر توکن لازم است
+                },
+            });
+
+            console.log('Upload Response:', res.data);
+            alert('Video uploaded successfully!');
+            setVideoUrl(null)
+            setCountdown(0)
+            setIsRecording(false)
+        } catch (err) {
+            console.error(err);
+            setError('Failed to upload video');
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -83,34 +138,39 @@ const VideoUpload = () => {
                     Video Recorder
                 </Typography>
 
-                {/* نمایش ویدیو ضبط‌شده */}
                 {videoUrl && !isRecording && (
                     <Box marginBottom={2}>
                         <video src={videoUrl} controls style={{ width: '100%', height: 'auto' }} />
                     </Box>
                 )}
 
-                {/* نمایش ویدیو در هنگام ضبط */}
-                {isRecording && (
+                {isRecording && countdown === 0 && (
                     <Box marginBottom={2}>
                         <video ref={videoElementRef} autoPlay muted style={{ width: '100%', height: 'auto' }} />
                     </Box>
                 )}
 
-                {/* دکمه‌ها برای شروع و توقف ضبط */}
-                {!isRecording && !videoUrl && (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        onClick={handleStartRecording}
-                        style={{ padding: '10px 20px', margin: '20px' }}
-                    >
-                        Start Recording
-                    </Button>
+                {countdown > 0 && (
+                    <Typography variant="h2" color="primary" gutterBottom>
+                        {countdown}
+                    </Typography>
                 )}
 
-                {isRecording && (
+                {!isRecording && !videoUrl && countdown === 0 && (
+                    <>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            onClick={handleStartRecording}
+                            style={{ padding: '10px 20px', margin: '20px' }}
+                        >
+                            Start Recording
+                        </Button>
+                    </>
+                )}
+
+                {isRecording && countdown === 0 && (
                     <Button
                         variant="contained"
                         color="secondary"
@@ -122,20 +182,50 @@ const VideoUpload = () => {
                     </Button>
                 )}
 
-                {/* دکمه ضبط مجدد پس از اتمام ضبط */}
+
+                {isRecording && countdown === 0 && (
+                    <>
+                        <Typography variant="body1" color="textSecondary" gutterBottom>
+                            Please say the following text in the video:
+                        </Typography>
+                        <Typography variant="h6" color="textSecondary" style={{ fontWeight: 'bold' , color:'black' }}>
+                            {randomMessage}
+                        </Typography>
+                    </>
+                )}
+
                 {videoUrl && !isRecording && (
                     <Button
                         variant="outlined"
-                        color="primary"
+                        color="error"
                         size="large"
-                        onClick={handleRecordAgain}
+                        onClick={() => {
+                            setVideoUrl(null)
+                            setCountdown(0)
+                            setIsRecording(false)
+                        }}
                         style={{ padding: '10px 20px', margin: '20px' }}
                     >
-                        Record Again
+                        Retake Video
                     </Button>
                 )}
 
-                {/* نمایش خطا در صورت وجود */}
+                {videoUrl && !isRecording && (
+                    <>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            size="large"
+                            onClick={handleUpload}
+                            style={{ padding: '10px 20px', margin: '20px' }}
+                            disabled={isUploading}
+                        >
+                            {isUploading ? 'Uploading...' : 'Upload Video'}
+                        </Button>
+                    </>
+                )}
+
+
                 {error && <Typography variant="body1" color="error">{error}</Typography>}
             </Container>
         </ThemeProvider>

@@ -9,8 +9,27 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 
 // Middleware
-app.use(cors());
+// CORS options
+const corsOptions = {
+    origin: [
+        "http://172.31.13.34:3000",
+        "https://172.31.13.34:3000",
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "http://172.31.13.30:3000",
+        "https://172.31.13.30:3000"
+    ],
+    methods: "GET,POST,PUT,DELETE",  // Methods you want to allow
+    allowedHeaders: "Content-Type,Authorization", // Allowed headers for your request
+    credentials: true,  // If you are sending credentials (cookies, authorization headers)
+    optionsSuccessStatus: 200
+}
+
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
+
+
 
 // Routes
 app.use('/api/auth', authRoutes);
