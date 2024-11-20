@@ -13,7 +13,15 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // حداکثر حجم فایل: 5MB
+}).fields([
+    { name: 'document_1', maxCount: 1 },
+    { name: 'document_2', maxCount: 1 },
+    { name: 'document_3', maxCount: 1 },
+    { name: 'document_4', maxCount: 1 },
+]);
 
 const videoStorage = multer.diskStorage({
     destination: './uploads/videos/',
@@ -25,13 +33,26 @@ const videoUpload = multer({ storage: videoStorage });
 
 
 // Upload KYC Documents
-router.post('/upload-documents', authenticateToken, upload.array('documents'), async (req, res) => {
+router.post('/upload-documents', authenticateToken, upload , async (req, res) => {
     const userId = req.user.userId;
-    const { document_type, document_number, expiration_date, issued_country } = req.body;
-    const document_images = req.files.map(file => ({
-        type: file.fieldname,
-        url: file.path
-    }));
+    const { document_type, document_number, expiration_date, issued_country, gender, address } = req.body;
+    const fs = require('fs');
+    const path = require('path');
+
+    const document_images = Object.keys(req.files).map((key) => {
+        const originalPath = req.files[key][0].path;
+        const directory = path.dirname(originalPath);
+        const originalFileName = path.basename(originalPath);
+        const newFileName = `${userId}_${originalFileName}`;
+        const newPath = path.join(directory, newFileName);
+
+        fs.renameSync(originalPath, newPath);
+
+        return {
+            type: key,
+            url: newPath,
+        };
+    });
 
     const kycDocument = new KycDocument({
         user_id: userId,
@@ -39,8 +60,10 @@ router.post('/upload-documents', authenticateToken, upload.array('documents'), a
         document_number,
         expiration_date,
         issued_country,
-        document_images ,
-        video: { url: null, type: null, uploaded_at: null }
+        document_images,
+        gender,
+        video: { url: null, type: null, uploaded_at: null },
+        address: address || {}  // اضافه کردن آدرس به مستندات
     });
 
     try {
@@ -72,7 +95,7 @@ router.post('/upload-video', authenticateToken, videoUpload.single('video'), asy
 
     try {
         // پیدا کردن داکیومنت مرتبط با کاربر و ID
-        const kycDocument = await KycDocument.findOne({ user_id: userId });
+        const kycDocument = await KycDocument.findOne({ user_id: userId }).sort({ uploaded_at: -1 });
 
         if (!kycDocument) {
             return res.status(404).json({ error: 'Document not found for this user' });

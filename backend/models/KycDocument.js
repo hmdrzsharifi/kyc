@@ -17,6 +17,7 @@ const DocumentSchema = new mongoose.Schema({
     reviewed_by: { type: String },
     reviewed_at: { type: Date },
     rejection_reason: { type: String },
+    gender: {type:String},
     video: {
         type: {
             type: String, // نوع ویدیو، مثل "video/webm"
@@ -29,6 +30,13 @@ const DocumentSchema = new mongoose.Schema({
             default: Date.now,
         },
     },
+    address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        postal_code: { type: String },
+        country: { type: String }
+    }
 });
 
 module.exports = mongoose.model('KycDocument', DocumentSchema);

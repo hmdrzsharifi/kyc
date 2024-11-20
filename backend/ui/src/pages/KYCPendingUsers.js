@@ -12,6 +12,7 @@ const KYCPendingUsers = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+
     useEffect(() => {
         const fetchPendingUsers = async () => {
             const token = localStorage.getItem('token');

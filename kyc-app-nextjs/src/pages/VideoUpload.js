@@ -1,15 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Typography, Box } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-
-const theme = createTheme({
-    palette: {
-        primary: { main: '#1976d2' },
-        secondary: { main: '#dc004e' },
-    },
-    typography: { fontFamily: 'Roboto, sans-serif' },
-});
+import { useRouter } from 'next/router';
+import Layout from '../Layout';
 
 const VideoUpload = () => {
     const [videoUrl, setVideoUrl] = useState(null);
@@ -18,7 +11,7 @@ const VideoUpload = () => {
     const [error, setError] = useState('');
     const [isUploading, setIsUploading] = useState(false);
     const [randomMessage, setRandomMessage] = useState('');
-    const [duration, setDuration] = useState(null); // برای ذخیره مدت زمان ویدیو
+    const [duration, setDuration] = useState(null); // To store the video duration
     const mediaRecorderRef = useRef(null);
     const videoChunks = useRef([]);
     const videoElementRef = useRef(null);
@@ -30,6 +23,8 @@ const VideoUpload = () => {
         "Say cheese and start recording!",
         "Lights, camera, action!",
     ];
+
+    const router = useRouter();
 
     useEffect(() => {
         return () => {
@@ -76,7 +71,7 @@ const VideoUpload = () => {
 
     const handleStartRecording = () => {
         setCountdown(3);
-        setRandomMessage(randomMessages[Math.floor(Math.random() * randomMessages.length)]); // انتخاب پیام رندوم
+        setRandomMessage(randomMessages[Math.floor(Math.random() * randomMessages.length)]); // Choose random message
         const countdownInterval = setInterval(() => {
             setCountdown((prev) => {
                 if (prev === 1) {
@@ -91,8 +86,15 @@ const VideoUpload = () => {
     const handleStopRecording = () => {
         setIsRecording(false);
         mediaRecorderRef.current.stop();
+
         if (videoElementRef.current) {
             videoElementRef.current.srcObject = null;
+        }
+
+        // توقف ترک‌های ویدیو و صدا
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null; // پاک کردن مرجع به استریم
         }
     };
 
@@ -109,21 +111,21 @@ const VideoUpload = () => {
             const response = await fetch(videoUrl);
             const videoBlob = await response.blob();
             const formData = new FormData();
-            formData.append('video', videoBlob, 'recorded-video.mp4'); // تغییر نام فایل به .mp4
-            formData.append('document_id', 'DOCUMENT_ID'); // مقدار مناسب را جایگزین کنید
+            formData.append('video', videoBlob, 'recorded-video.mp4'); // Rename file to .mp4
+            formData.append('document_id', 'DOCUMENT_ID'); // Replace with appropriate value
 
             const res = await axios.post('http://172.31.13.30:5000/api/kyc/upload-video', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`, // اگر توکن لازم است
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
             console.log('Upload Response:', res.data);
             alert('Video uploaded successfully!');
-            setVideoUrl(null)
-            setCountdown(0)
-            setIsRecording(false)
+            setVideoUrl(null);
+            setCountdown(0);
+            setIsRecording(false);
         } catch (err) {
             console.error(err);
             setError('Failed to upload video');
@@ -139,7 +141,7 @@ const VideoUpload = () => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <Layout>
             <Container maxWidth="sm" style={{ textAlign: 'center', paddingTop: '20px' }}>
                 <Typography variant="h4" gutterBottom>
                     Video Recorder
@@ -199,7 +201,7 @@ const VideoUpload = () => {
                         <Typography variant="body1" color="textSecondary" gutterBottom>
                             Please say the following text in the video:
                         </Typography>
-                        <Typography variant="h6" color="textSecondary" style={{ fontWeight: 'bold', color:'black' }}>
+                        <Typography variant="h6" color="textSecondary" style={{ fontWeight: 'bold', color: 'black' }}>
                             {randomMessage}
                         </Typography>
                     </>
@@ -211,9 +213,9 @@ const VideoUpload = () => {
                         color="error"
                         size="large"
                         onClick={() => {
-                            setVideoUrl(null)
-                            setCountdown(0)
-                            setIsRecording(false)
+                            setVideoUrl(null);
+                            setCountdown(0);
+                            setIsRecording(false);
                         }}
                         style={{ padding: '10px 20px', margin: '20px' }}
                     >
@@ -244,7 +246,7 @@ const VideoUpload = () => {
 
                 {error && <Typography variant="body1" color="error">{error}</Typography>}
             </Container>
-        </ThemeProvider>
+        </Layout>
     );
 };
 
