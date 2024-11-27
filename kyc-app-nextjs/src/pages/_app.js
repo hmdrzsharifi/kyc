@@ -1,5 +1,11 @@
 import "@/styles/globals.css";
+import {KeycloakProvider} from "@/pages/auth/provider/KeycloakProvider";
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+function MyApp({ Component, pageProps }) {
+  return (
+      <KeycloakProvider>
+        <Component {...pageProps} />
+      </KeycloakProvider>
+  );
 }
+export default MyApp;

@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import Layout from "@/Layout";
 import DocumentDetailsPopup from "./DocumentDetailsPopup"; // مسیر درست فایل را مشخص کنید.
+import { getToken } from '@/pages/auth/config/keycloak';
 
 const KYCPendingUsers = () => {
     const [users, setUsers] = useState([]);
@@ -19,7 +20,7 @@ const KYCPendingUsers = () => {
 
     useEffect(() => {
         const fetchPendingUsers = async () => {
-            const token = localStorage.getItem('token');
+            const token = await getToken();
             try {
                 const response = await axios.get('http://172.31.13.30:5000/api/admin/kyc-pending', {
                     headers: {
@@ -47,7 +48,7 @@ const KYCPendingUsers = () => {
 
         console.log({ selectedUser });
 
-        const token = localStorage.getItem('token');
+        const token = await getToken();
         try {
             const response = await axios.post(
                 'http://172.31.13.30:5000/api/admin/kyc-documents',

@@ -11,6 +11,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
+import LogoutButton from "@/pages/auth/components/LogoutButton";
 
 const Layout = ({ children }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -48,18 +49,19 @@ const Layout = ({ children }) => {
                         KYC Management
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <IconButton
-                            onClick={handleLogout}
-                            sx={{
-                                borderRadius: '50%', // گرد کردن دکمه
-                                padding: '10px', // تنظیم اندازه دکمه
-                                '&:hover': {
-                                    backgroundColor: '#a8aab0', // رنگ دکمه در حالت هاور
-                                },
-                            }}
-                        >
-                            <LogoutIcon sx={{ color: 'white' }} />
-                        </IconButton>
+                        {/*<IconButton*/}
+                        {/*    onClick={handleLogout}*/}
+                        {/*    sx={{*/}
+                        {/*        borderRadius: '50%', // گرد کردن دکمه*/}
+                        {/*        padding: '10px', // تنظیم اندازه دکمه*/}
+                        {/*        '&:hover': {*/}
+                        {/*            backgroundColor: '#a8aab0', // رنگ دکمه در حالت هاور*/}
+                        {/*        },*/}
+                        {/*    }}*/}
+                        {/*>*/}
+                        <LogoutButton></LogoutButton>
+                            {/*<LogoutIcon sx={{ color: 'white' }} />*/}
+                        {/*</IconButton>*/}
                     </Box>
                 </Toolbar>
             </AppBar>

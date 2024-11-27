@@ -3,6 +3,8 @@ import { Button, Container, Typography, Box } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Layout from '../Layout';
+import { getToken } from '@/pages/auth/config/keycloak';
+import { useKeycloak } from '@/pages/auth/provider/KeycloakProvider';
 
 const VideoUpload = () => {
     const [videoUrl, setVideoUrl] = useState(null);
@@ -16,6 +18,7 @@ const VideoUpload = () => {
     const videoChunks = useRef([]);
     const videoElementRef = useRef(null);
     const streamRef = useRef(null);
+    const { user } = useKeycloak();
 
     const randomMessages = [
         "Let's capture this moment!",
@@ -25,6 +28,7 @@ const VideoUpload = () => {
     ];
 
     const router = useRouter();
+
 
     useEffect(() => {
         return () => {
@@ -107,12 +111,13 @@ const VideoUpload = () => {
         setError('');
 
         try {
-            const token = localStorage.getItem('token');
+            const token = await getToken();
             const response = await fetch(videoUrl);
             const videoBlob = await response.blob();
             const formData = new FormData();
             formData.append('video', videoBlob, 'recorded-video.mp4'); // Rename file to .mp4
             formData.append('document_id', 'DOCUMENT_ID'); // Replace with appropriate value
+            formData.append('user_email', user.email); // Replace with appropriate value
 
             const res = await axios.post('http://172.31.13.30:5000/api/kyc/upload-video', formData, {
                 headers: {

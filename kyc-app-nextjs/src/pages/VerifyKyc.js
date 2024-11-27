@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Container, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Button, Box, Alert } from '@mui/material';
 import Layout from '../Layout';
+import { getToken } from '@/pages/auth/config/keycloak';
+import { useKeycloak } from '@/pages/auth/provider/KeycloakProvider';
 
 const VerifyKYC = () => {
     const router = useRouter();
@@ -11,6 +13,7 @@ const VerifyKYC = () => {
     const [rejectionReason, setRejectionReason] = useState('');
     const [status, setStatus] = useState('');
     const [error, setError] = useState(null);
+    const { user } = useKeycloak();
 
     // UseEffect to wait for userId to be available
     useEffect(() => {
@@ -30,11 +33,12 @@ const VerifyKYC = () => {
             return;
         }
 
-        const token = localStorage.getItem('token');
+        const token = await getToken();
         try {
             const response = await axios.post(
                 `http://172.31.13.30:5000/api/admin/verify/${userId}`,
                 {
+                    admin_email: user.email,
                     action,
                     rejection_reason: action === 'reject' ? rejectionReason : undefined,
                 },

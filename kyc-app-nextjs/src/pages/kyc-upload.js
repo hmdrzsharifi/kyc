@@ -17,6 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
 import Layout from '../Layout';
 import axios from "axios";
+import { getToken } from '@/pages/auth/config/keycloak';
+import { useKeycloak } from '@/pages/auth/provider/KeycloakProvider';
 
 const KycUpload = () => {
     const [documentType, setDocumentType] = useState('');
@@ -50,8 +52,11 @@ const KycUpload = () => {
         setDocuments(newFiles);
     };
 
+    const { user } = useKeycloak();
+
     const handleUpload = async () => {
         const formData = new FormData();
+        formData.append('user_email' , user.email)
         formData.append('document_type', documentType);
         formData.append('document_number', documentNumber);
         formData.append('expiration_date', expirationDate);
@@ -62,7 +67,7 @@ const KycUpload = () => {
         formData.append('address[street]', address.street);
         formData.append('address[city]', address.city);
         formData.append('address[state]', address.state);
-        formData.append('address[postalCode]', address.postalCode);
+        formData.append('address[postal_code]', address.postalCode);
         formData.append('address[country]', address.country);
 
         documents.forEach((file, index) => {
@@ -72,7 +77,7 @@ const KycUpload = () => {
         });
 
         try {
-            const token = localStorage.getItem('token');
+            const token = await getToken();
             await axios.post('http://172.31.13.30:5000/api/kyc/upload-documents', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,

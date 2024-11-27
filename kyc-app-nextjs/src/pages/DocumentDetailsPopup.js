@@ -104,6 +104,9 @@ const DocumentDetailsPopup = ({ open, onClose, document }) => {
                                     <ListItemText primary="State" secondary={document.document.address?.state} />
                                 </ListItem>
                                 <ListItem sx={{ borderBottom: '1px solid #f0f0f0' }}>
+                                    <ListItemText primary="PostalCode" secondary={document.document.address?.postal_code} />
+                                </ListItem>
+                                <ListItem sx={{ borderBottom: '1px solid #f0f0f0' }}>
                                     <ListItemText primary="Country" secondary={document.document.address?.country} />
                                 </ListItem>
                             </List>

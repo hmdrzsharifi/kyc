@@ -7,20 +7,28 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Layout from '../Layout';
+import { getToken } from '@/pages/auth/config/keycloak';
+import { useKeycloak } from '@/pages/auth/provider/KeycloakProvider';
 
 const KycStatus = () => {
     const [status, setStatus] = useState(null);
     const router = useRouter();
+    const { user } = useKeycloak();
 
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://172.31.13.30:5000/api/kyc/status', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
+                const token = await getToken();
+                const response = await axios.post('http://172.31.13.30:5000/api/kyc/status',
+                    {
+                        user_email: user.email
                     },
-                });
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 setStatus(response.data.kyc_status);
             } catch (err) {
                 console.error(err);

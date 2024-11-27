@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Container, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Button, Box, Alert } from '@mui/material';
 import Layout from '../../../Layout';
+import { getToken } from '@/pages/auth/config/keycloak';
 
 const VerifyKYC = () => {
     const router = useRouter();
@@ -30,7 +31,7 @@ const VerifyKYC = () => {
             return;
         }
 
-        const token = localStorage.getItem('token');
+        const token = await getToken();
         try {
             const response = await axios.post(
                 `http://172.31.13.30:5000/api/admin/verify/${userId}`,
