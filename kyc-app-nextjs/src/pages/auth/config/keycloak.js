@@ -1,7 +1,7 @@
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig = {
-    url: 'http://adi.dev.modernisc.com:6060', // URL Keycloak خود را جایگزین کنید
+    url: 'http://saramad.dev.modernisc.com:6060', // URL Keycloak خود را جایگزین کنید
     realm: 'platform', // Realm Keycloak خود را جایگزین کنید
     clientId: 'dashboard', // Client ID Keycloak خود را جایگزین کنید
 };

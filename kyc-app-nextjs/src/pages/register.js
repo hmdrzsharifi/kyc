@@ -6,13 +6,23 @@ import { useRouter } from 'next/router';
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState(''); // افزودن state برای firstName
+    const [lastName, setLastName] = useState(''); // افزودن state برای lastName
+    const [userName, setUserName] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
 
     const handleRegister = async () => {
         try {
-            await axios.post('http://172.31.13.30:5000/api/auth/register', { email, password });
-            router.push('/login'); // هدایت به صفحه لاگین بعد از موفقیت در ثبت‌نام
+            // ارسال داده‌ها به سرور شامل firstName و lastName
+            await axios.post('http://172.31.13.30:5000/api/auth/register', {
+                email,
+                password,
+                firstName, // ارسال firstName
+                lastName,
+                userName,
+            });
+            router.push('/'); // هدایت به صفحه لاگین بعد از موفقیت در ثبت‌نام
         } catch (err) {
             setError('User already exists');
         }
@@ -54,6 +64,30 @@ const Register = () => {
                     fullWidth
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    label="User Name"
+                    variant="outlined"
+                    fullWidth
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)} // اضافه کردن onChange برای firstName
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    label="First Name"
+                    variant="outlined"
+                    fullWidth
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)} // اضافه کردن onChange برای firstName
+                    sx={{ mb: 2 }}
+                />
+                <TextField
+                    label="Last Name"
+                    variant="outlined"
+                    fullWidth
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)} // اضافه کردن onChange برای lastName
                     sx={{ mb: 2 }}
                 />
                 <Button variant="contained" color="primary" onClick={handleRegister}>

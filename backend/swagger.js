@@ -15,7 +15,7 @@ const swaggerOptions = {
                     type: 'oauth2',
                     flows: {
                         clientCredentials: {
-                            tokenUrl: 'http://adi.dev.modernisc.com:6060/realms/platform/protocol/openid-connect/token', // URL دریافت توکن از Keycloak
+                            tokenUrl: 'http://saramad.dev.modernisc.com:6060/realms/platform/protocol/openid-connect/token', // URL دریافت توکن از Keycloak
                             scopes: {
                                 'admin': 'Admin Access',
                                 'user': 'User Access',
