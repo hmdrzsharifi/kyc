@@ -108,31 +108,31 @@ const Layout = ({ children }) => {
                     {/*</ListItem>*/}
                     {/*<Divider />*/}
                     {/*<Divider />*/}
-                    <ListItem button component={Link} href="/level2">
-                        <ContactMailIcon />
-                        <ListItemText primary="level2" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button component={Link} href="/level3">
-                        <ContactMailIcon />
-                        <ListItemText primary="level3" />
-                    </ListItem>
-                    <Divider />
+                    {/*<ListItem button component={Link} href="/level2">*/}
+                    {/*    <ContactMailIcon />*/}
+                    {/*    <ListItemText primary="level2" />*/}
+                    {/*</ListItem>*/}
+                    {/*<Divider />*/}
+                    {/*<ListItem button component={Link} href="/level3">*/}
+                    {/*    <ContactMailIcon />*/}
+                    {/*    <ListItemText primary="level3" />*/}
+                    {/*</ListItem>*/}
+                    {/*<Divider />*/}
                     {/*<ListItem button component={Link} href="/verification">*/}
                     {/*    <ContactMailIcon />*/}
                     {/*    <ListItemText primary="Verification" />*/}
                     {/*</ListItem>*/}
                     {/*<Divider />*/}
-                    <ListItem button component={Link} href="/level2Verify">
-                        <ContactMailIcon />
-                        <ListItemText primary="level2Verify" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button component={Link} href="/level3Verify">
-                        <ContactMailIcon />
-                        <ListItemText primary="level3Verify" />
-                    </ListItem>
-                    <Divider />
+                    {/*<ListItem button component={Link} href="/level2Verify">*/}
+                    {/*    <ContactMailIcon />*/}
+                    {/*    <ListItemText primary="level2Verify" />*/}
+                    {/*</ListItem>*/}
+                    {/*<Divider />*/}
+                    {/*<ListItem button component={Link} href="/level3Verify">*/}
+                    {/*    <ContactMailIcon />*/}
+                    {/*    <ListItemText primary="level3Verify" />*/}
+                    {/*</ListItem>*/}
+                    {/*<Divider />*/}
 
                     <ListItem button component={Link} href="/upload-documents">
                         <ContactMailIcon />

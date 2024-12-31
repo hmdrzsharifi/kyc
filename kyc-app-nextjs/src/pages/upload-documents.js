@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Box, Button, Grid, TextField, Typography, MenuItem } from '@mui/material';
 import axios from 'axios';
 import {getToken} from "@/pages/auth/config/keycloak";
+import Layout from "@/Layout";
 
 const UploadDocuments = () => {
     const [formData, setFormData] = useState({
@@ -66,6 +67,7 @@ const UploadDocuments = () => {
     };
 
     return (
+        <Layout>
         <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
             <Typography variant="h4" mb={2} align="center">
                 Upload Documents
@@ -214,6 +216,7 @@ const UploadDocuments = () => {
                 </Grid>
             </form>
         </Box>
+            </Layout>
     );
 };
 

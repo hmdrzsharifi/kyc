@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, Typography, CircularProgress, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import axios from 'axios';
 import { getToken } from "@/pages/auth/config/keycloak";
+import Layout from "@/Layout";
 
 const PendingKYCs = () => {
     const [kycs, setKycs] = useState([]);
@@ -73,6 +74,7 @@ const PendingKYCs = () => {
     ];
 
     return (
+        <Layout>
         <Box sx={{ height: 600, width: '100%', padding: 2 }}>
             <Typography variant="h4" gutterBottom>
                 Pending KYC Documents
@@ -132,6 +134,7 @@ const PendingKYCs = () => {
                 </DialogActions>
             </Dialog>
         </Box>
+            </Layout>
     );
 };
 
