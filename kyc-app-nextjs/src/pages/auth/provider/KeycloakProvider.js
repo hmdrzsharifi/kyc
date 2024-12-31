@@ -21,9 +21,11 @@ export const KeycloakProvider = ({ children }) => {
                     if (keycloak && auth) {
                         const tokenParsed = keycloak.tokenParsed || {};
                         console.log({tokenParsed})
+                        const subPart = tokenParsed.sub.includes(':') ? tokenParsed.sub.split(':').pop() : tokenParsed.sub;
                         setUser({
                             name: tokenParsed.preferred_username || 'Unknown User',
                             email: tokenParsed.email || 'No Email',
+                            sub : subPart || 'No Sub',
                         });
                     }
                     setInitialized(true);

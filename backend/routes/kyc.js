@@ -2,279 +2,153 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
-const KycDocument = require('../models/KycDocument');
-const User = require('../models/User');
+const UserKYC = require('../models/new/userKYC');
+const Address = require('../models/new/address');
+const Document = require('../models/new/document');
+const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+const UserEntity = require('../models/new/UserEntityModel');
 
-// Configure Multer for file uploads
+
+const uploadDir = 'uploads-new/';
+
+// Check if the directory exists, and create it if it doesn't
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-    destination: './uploads/',
+    destination: (req, file, cb) => {
+        cb(null, uploadDir); // مسیر ذخیره فایل‌ها
+    },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
+        cb(null, `${Date.now()}_${file.originalname}`);
     }
 });
-const upload = multer({
-    storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // حداکثر حجم فایل: 5MB
-}).fields([
-    { name: 'document_1', maxCount: 1 },
-    { name: 'document_2', maxCount: 1 },
-    { name: 'document_3', maxCount: 1 },
-    { name: 'document_4', maxCount: 1 },
-]);
+const upload = multer({ storage });
 
-const videoStorage = multer.diskStorage({
-    destination: './uploads/videos/',
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const videoUpload = multer({ storage: videoStorage });
-
-
-// Upload KYC Documents
-/**
- * @swagger
- * /api/kyc/upload-documents:
- *   post:
- *     summary: Upload KYC Documents
- *     description: Upload KYC documents along with the user's details.
- *     security:
- *       - OAuth2: [admin, user]
- *     tags:
- *       - KYC
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               document_type:
- *                 type: string
- *               document_number:
- *                 type: string
- *               expiration_date:
- *                 type: string
- *                 format: date
- *               issued_country:
- *                 type: string
- *               gender:
- *                 type: string
- *               address:
- *                 type: object
- *                 additionalProperties: true
- *               files:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *     responses:
- *       200:
- *         description: Documents uploaded successfully
- *       500:
- *         description: Failed to upload documents
- */
-router.post('/upload-documents',  upload , async (req, res) => {
-    const { document_type, document_number, expiration_date, issued_country, gender, address , user_email} = req.body;
-    const fs = require('fs');
-    const path = require('path');
-
-    const user = await User.findOne({ email: user_email });
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-    }
-
-    const document_images = Object.keys(req.files).map((key) => {
-        const originalPath = req.files[key][0].path;
-        const directory = path.dirname(originalPath);
-        const originalFileName = path.basename(originalPath);
-        const newFileName = `${user._id}_${originalFileName}`;
-        const newPath = path.join(directory, newFileName);
-
-        fs.renameSync(originalPath, newPath);
-
-        return {
-            type: key,
-            url: newPath,
-        };
-    });
-
-    const kycDocument = new KycDocument({
-        user_id: user._id,
-        document_type,
-        document_number,
-        expiration_date,
-        issued_country,
-        document_images,
-        gender,
-        video: { url: null, type: null, uploaded_at: null },
-        address: address || {}  // اضافه کردن آدرس به مستندات
-    });
-
+router.post('/upload-documents', upload.fields([
+    { name: 'bill', maxCount: 1 },
+    { name: 'identity', maxCount: 1 }
+]), async (req, res) => {
+    let billFile, identityFile;
     try {
-        await kycDocument.save();
-        await User.findByIdAndUpdate(user._id, { kyc_status: 'documents_uploaded', kyc_updated_at: new Date() });
-        res.json({ message: 'Documents uploaded' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to upload documents' });
-    }
-});
+        const tokenParsed = req.kauth.grant.access_token.content;
+        const userId = tokenParsed.sub.includes(':') ? tokenParsed.sub.split(':').pop() : tokenParsed.sub;
 
-
-/**
- * @swagger
- * /api/kyc/status:
- *   post:
- *     summary: Get KYC Status
- *     description: Retrieve the KYC status of the user based on the user ID provided in the request body.
- *     security:
- *       - OAuth2: [admin, user]
- *     tags:
- *       - KYC
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               user_email:
- *                 type: string
- *                 description: The unique identifier of the user
- *                 example: "1234567890"
- *     responses:
- *       200:
- *         description: The KYC status of the user
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 kyc_status:
- *                   type: string
- *                   example: "documents_uploaded"
- *       400:
- *         description: User ID is required in the request body
- *       404:
- *         description: User not found
- *       500:
- *         description: Failed to get KYC status
- */
-router.post('/status', async (req, res) => {
-    const { user_email } = req.body;
-
-    if (!user_email) {
-        return res.status(400).json({ error: 'User ID is required in the request body' });
-    }
-
-    try {
-        const user = await User.findOne({ email: user_email });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        res.json({ kyc_status: user.kyc_status });
-    } catch (err) {
-        console.error('Error retrieving user KYC status:', err);
-        res.status(500).json({ error: 'Failed to get KYC status' });
-    }
-});
-
-// Get KYC Status
-// /**
-//  * @swagger
-//  * /api/kyc/status:
-//  *   get:
-//  *     summary: Get KYC Status
-//  *     description: Retrieve the KYC status of the user.
-//  *     security:
-//  *       - OAuth2: [admin, user]
-//  *     tags:
-//  *       - KYC
-//  *     responses:
-//  *       200:
-//  *         description: The KYC status of the user
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 kyc_status:
-//  *                   type: string
-//  *                   example: "documents_uploaded"
-//  *       500:
-//  *         description: Failed to get KYC status
-//  */
-// router.get('/status', async (req, res) => {
-//     const userId = req.user.userId;
-//     try {
-//         const user = await User.findById(userId);
-//         res.json({ kyc_status: user.kyc_status });
-//     } catch (err) {
-//         res.status(500).json({ error: 'Failed to get KYC status' });
-//     }
-// });
-
-
-
-// Upload Video to KYC Document
-/**
- * @swagger
- * /api/kyc/upload-video:
- *   post:
- *     summary: Upload Video to KYC Document
- *     description: Upload a video to the KYC document for verification.
- *     security:
- *       - OAuth2: [admin, user]
- *     tags:
- *       - KYC
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               document_id:
- *                 type: string
- *               video:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Video uploaded successfully
- *       404:
- *         description: Document not found for the user
- *       500:
- *         description: Failed to upload video
- */
-router.post('/upload-video', videoUpload.single('video'), async (req, res) => {
-    const { document_id , user_email} = req.body;
-
-    try {
-        const user = await User.findOne({ email: user_email });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        // پیدا کردن داکیومنت مرتبط با کاربر و ID
-        const kycDocument = await KycDocument.findOne({ user_id: user._id }).sort({ uploaded_at: -1 });
-
-        if (!kycDocument) {
-            return res.status(404).json({ error: 'Document not found for this user' });
+        // بررسی وجود فایل‌ها
+        if (!req.files || !req.files.bill || !req.files.identity) {
+            return res.status(400).json({ message: 'Both bill and identity documents are required' });
         }
 
-        // ذخیره آدرس ویدیو در داکیومنت
-        kycDocument.video = {
-            type: req.file.mimetype,
-            url: req.file.path,
-            uploaded_at: new Date()
-        };
+        billFile = req.files.bill[0];
+        identityFile = req.files.identity[0];
 
-        await kycDocument.save();
-        res.json({ message: 'Video uploaded successfully', document: kycDocument });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to upload video' });
+        // بررسی نوع سند هویت
+        const allowedIdentityTypes = ['passport', 'drivers_license', 'national_id'];
+        const { identityType, addressLine1, addressLine2, city, state, postalCode, country } = req.body;
+
+        if (!allowedIdentityTypes.includes(identityType)) {
+            return res.status(400).json({ message: `Invalid identityType. Allowed values: ${allowedIdentityTypes.join(', ')}` });
+        }
+
+        // بررسی اطلاعات آدرس
+        if (!addressLine1 || !city || !state || !postalCode || !country) {
+            return res.status(400).json({ message: 'All address fields are required (addressLine1, city, state, postalCode, country).' });
+        }
+
+        // ایجاد یا پیدا کردن UserKYC برای کاربر
+        let userKYC = await UserKYC.findOne({ userId });
+        if (!userKYC) {
+            userKYC = new UserKYC({
+                userId,
+                verificationLevel: 1,
+                status: 'pending',
+                documents: {}
+            });
+        }
+
+        // ایجاد یا به‌روزرسانی آدرس
+        let address;
+        if (userKYC.addressId) {
+            address = await Address.findById(userKYC.addressId);
+            address.addressLine1 = addressLine1;
+            address.addressLine2 = addressLine2;
+            address.city = city;
+            address.state = state;
+            address.postalCode = postalCode;
+            address.country = country;
+            address.updatedAt = new Date();
+        } else {
+            address = new Address({
+                userKYCId: userKYC._id,
+                addressLine1,
+                city,
+                state,
+                postalCode,
+                country
+            });
+            await address.save();
+            userKYC.addressId = address._id;
+        }
+        await address.save();
+
+        // آپلود فایل‌ها در مدل Document
+        const billDocument = new Document({
+            userKYCId: userKYC._id,
+            documentType: 'bill',
+            fileId: billFile.filename,
+            fileName: billFile.originalname,
+            fileType: billFile.mimetype,
+            metadata: { uploadedBy: userId }
+        });
+        await billDocument.save();
+
+        const identityDocument = new Document({
+            userKYCId: userKYC._id,
+            documentType: identityType,
+            fileId: identityFile.filename,
+            fileName: identityFile.originalname,
+            fileType: identityFile.mimetype,
+            metadata: { uploadedBy: userId }
+        });
+        await identityDocument.save();
+
+        // به‌روزرسانی UserKYC با اسناد
+        userKYC.documents.billDocumentId = billDocument._id;
+        userKYC.documents.idDocumentId = identityDocument._id;
+        userKYC.updatedAt = new Date();
+        await userKYC.save();
+
+        res.status(201).json({
+            message: 'Documents and address uploaded successfully',
+            userKYC,
+            documents: { billDocument, identityDocument },
+            address
+        });
+    } catch (error) {
+        // Cleanup uploaded files if there's an error
+        if (billFile) {
+            const billFilePath = path.join(uploadDir, billFile.filename);
+            if (fs.existsSync(billFilePath)) {
+                fs.unlinkSync(billFilePath);  // Delete the bill file
+            }
+        }
+        if (identityFile) {
+            const identityFilePath = path.join(uploadDir, identityFile.filename);
+            if (fs.existsSync(identityFilePath)) {
+                fs.unlinkSync(identityFilePath);  // Delete the identity file
+            }
+        }
+        res.status(500).json({ message: error.message });
     }
 });
+
+
+
+
+
+
 
 module.exports = router;

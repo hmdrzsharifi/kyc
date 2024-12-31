@@ -21,6 +21,7 @@ const corsOptions = {
         'http://172.31.13.34:3000',
         'https://172.31.13.34:3000',
         "https://172.31.13.30:3000",
+        "http://172.31.13.30:3000",
         "https://172.31.13.11:3000",
     ],
     methods: 'GET,POST,PUT,DELETE',
@@ -48,7 +49,7 @@ app.use('/api/kyc', keycloak.protect(), kycRoutes);
 app.use('/api/admin', keycloak.protect('admin'), adminRoutes);
 
 // اتصال به MongoDB
-mongoose.connect('mongodb://adi.dev.modernisc.com:27017/kycdb', {
+mongoose.connect('mongodb://adi.dev.modernisc.com:27017/kyc', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => console.log('MongoDB Connected'))

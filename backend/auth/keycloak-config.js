@@ -11,7 +11,7 @@ const keycloak = new Keycloak({
     realm: 'platform',  // نام realm شما
     clientId: 'test1',  // شناسه client شما
     clientSecret: '41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj',  // رمز client شما
-    authServerUrl: 'http://saramad.dev.modernisc.com:6060',// آدرس سرور Keycloak
+    authServerUrl: 'http://172.31.13.30:6060',// آدرس سرور Keycloak
 
 });
 

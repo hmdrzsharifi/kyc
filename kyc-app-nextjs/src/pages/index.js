@@ -4,9 +4,12 @@ import Link from 'next/link';
 import { useKeycloak } from '@/pages/auth/provider/KeycloakProvider';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { Email, Person } from '@mui/icons-material';
+import {getToken} from "@/pages/auth/config/keycloak";
 
 const IndexPage = () => {
     const { logout, user } = useKeycloak();
+    const token =  getToken();
+    console.log({token})
 
     return (
         <Layout>
@@ -31,6 +34,11 @@ const IndexPage = () => {
                             <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
                                 <Email sx={{ marginRight: 1 }} />
                                 {user?.email}
+                            </Typography>
+
+                            <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
+                                <Email sx={{ marginRight: 1 }} />
+                                {user?.sub}
                             </Typography>
                         </CardContent>
                     </Card>

@@ -1,7 +1,7 @@
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig = {
-    url: 'http://saramad.dev.modernisc.com:6060', // URL Keycloak خود را جایگزین کنید
+    url: 'http://172.31.13.30:6060', // URL Keycloak خود را جایگزین کنید
     realm: 'platform', // Realm Keycloak خود را جایگزین کنید
     clientId: 'dashboard', // Client ID Keycloak خود را جایگزین کنید
 };
@@ -21,7 +21,7 @@ export const initKeycloak = () => {
         return keycloak
             .init({
                 onLoad: 'login-required',
-                redirectUri: 'https://172.31.13.30:3000/', // این URI باید با تنظیمات Keycloak مطابقت داشته باشد
+                redirectUri: 'http://172.31.13.30:3000/', // این URI باید با تنظیمات Keycloak مطابقت داشته باشد
                 checkLoginIframe: false,
             })
             .then(authenticated => {
