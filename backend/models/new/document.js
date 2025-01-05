@@ -11,6 +11,7 @@ const documentSchema = new mongoose.Schema({
     verifiedAt: { type: Date, default: null },
     verifiedBy: { type: String, default: null },
     reasonForRejection: { type: String, default: null },
+    base64File:{type:String , default:null},
     metadata: { type: Object, default: {} },
 });
 

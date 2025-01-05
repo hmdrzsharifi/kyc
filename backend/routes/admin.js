@@ -75,6 +75,78 @@ router.get('/pending-kycs', async (req, res) => {
     }
 });
 
+
+router.get('/getUserKyc', async (req, res) => {
+    try {
+        // گرفتن userId از ورودی (query parameter)
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ message: 'userId is required.' });
+        }
+
+        // گرفتن اطلاعات KYC برای کاربر مشخص
+        const userKYCs = await UserKYC.find({ userId });
+
+        if (!userKYCs.length) {
+            return res.status(404).json({ message: 'No KYC records found for the specified user.' });
+        }
+
+        const userKYCsWithDetails = [];
+
+        for (const kyc of userKYCs) {
+            const kycData = { ...kyc._doc };
+
+            // گرفتن آدرس مرتبط
+            const address = await Address.findOne({ _id: kyc.addressId });
+            kycData.address = address;
+
+            // گرفتن مدارک مرتبط
+            const billDocument = await Document.findOne({ _id: kyc.documents?.billDocumentId });
+            const idDocument = await Document.findOne({ _id: kyc.documents?.idDocumentId });
+
+            if (billDocument) {
+                const billFilePath = path.join(uploadDir, billDocument.fileId);
+                if (fs.existsSync(billFilePath)) {
+                    const billFileData = fs.readFileSync(billFilePath);
+                    billDocument.base64File = billFileData.toString('base64');
+                }
+            }
+
+            if (idDocument) {
+                const identityFilePath = path.join(uploadDir, idDocument.fileId);
+                if (fs.existsSync(identityFilePath)) {
+                    const identityFileData = fs.readFileSync(identityFilePath);
+                    idDocument.base64File = identityFileData.toString('base64');
+                }
+            }
+
+            kycData.documents = { billDocument, idDocument };
+
+            // گرفتن اطلاعات کاربر از پایگاه داده PostgreSQL
+            try {
+                const user = await UserEntity.findOne({ where: { id: kyc.userId }, raw: true });
+                if (user) {
+                    const { password, ...userWithoutPassword } = user;
+                    kycData.user = userWithoutPassword;
+                }
+            } catch (error) {
+                console.error("Error fetching user: ", error);
+            }
+
+            // اضافه کردن داده‌های پردازش‌شده به نتیجه نهایی
+            kyc._doc = kycData;
+            userKYCsWithDetails.push(kyc);
+        }
+
+        // ارسال نتیجه نهایی
+        res.status(200).json(userKYCsWithDetails);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 router.post('/verify-documents', async (req, res) => {
     const { userId, documentUpdates, addressUpdate } = req.body;
 
