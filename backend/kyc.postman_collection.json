@@ -1,0 +1,301 @@
+{
+	"info": {
+		"_postman_id": "a2613d04-fea7-4e78-a24a-3f64fc717ce9",
+		"name": "kyc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "verify-documents/level2",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"83abeffb-0afc-4236-a774-9fc489e0afb6\",\r\n    \"documentUpdates\": [\r\n        {\r\n            \"documentId\": \"677ce8d2119e95d872a1cb79\",\r\n            \"verifiedStatus\": \"verified\",\r\n            \"reasonForRejection\": null\r\n        }\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/verify-documents/level2"
+			},
+			"response": []
+		},
+		{
+			"name": "verify-documents/level3",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"83abeffb-0afc-4236-a774-9fc489e0afb6\",\r\n    \"documentUpdates\": [\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539047\",\r\n            \"verifiedStatus\": \"verified\",\r\n            \"reasonForRejection\": null\r\n        },\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539045\",\r\n            \"verifiedStatus\": \"rejected\",\r\n            \"reasonForRejection\": \"حال کردم ریجکت کنم\"\r\n        }\r\n    ],\r\n    \"addressUpdate\": {\r\n        \"verified\": false,\r\n        \"verificationDate\": \"2024-01-01T10:00:00Z\"\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/verify-documents"
+			},
+			"response": []
+		},
+		{
+			"name": "admin/getUserLevel",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"83abeffb-0afc-4236-a774-9fc489e0afb6\",\r\n    \"documentUpdates\": [\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539047\",\r\n            \"verifiedStatus\": \"verified\",\r\n            \"reasonForRejection\": null\r\n        },\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539045\",\r\n            \"verifiedStatus\": \"rejected\",\r\n            \"reasonForRejection\": \"حال کردم ریجکت کنم\"\r\n        }\r\n    ],\r\n    \"addressUpdate\": {\r\n        \"verified\": false,\r\n        \"verificationDate\": \"2024-01-01T10:00:00Z\"\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/verify-documents"
+			},
+			"response": []
+		},
+		{
+			"name": "user/getUserLevel",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"83abeffb-0afc-4236-a774-9fc489e0afb6\",\r\n    \"documentUpdates\": [\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539047\",\r\n            \"verifiedStatus\": \"verified\",\r\n            \"reasonForRejection\": null\r\n        },\r\n        {\r\n            \"documentId\": \"67737dbb50a3146114539045\",\r\n            \"verifiedStatus\": \"rejected\",\r\n            \"reasonForRejection\": \"حال کردم ریجکت کنم\"\r\n        }\r\n    ],\r\n    \"addressUpdate\": {\r\n        \"verified\": false,\r\n        \"verificationDate\": \"2024-01-01T10:00:00Z\"\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/verify-documents"
+			},
+			"response": []
+		},
+		{
+			"name": "getUserKyc",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"tokenType": "Bearer",
+						"accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtczRkRjhOREMwYld2T3JFRFFYTWFrby1NTktORTZZa0hLaW5KUW9FUzd3In0.eyJleHAiOjE3MzYwNjk5OTcsImlhdCI6MTczNjA2OTM5NywianRpIjoiMDcyODBjODMtNGYyMC00Nzc3LWFhYzEtMTQ2MmIyYTk2MGU0IiwiaXNzIjoiaHR0cDovLzE3Mi4zMS4xMy4zMDo2MDYwL3JlYWxtcy9wbGF0Zm9ybSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIzZWRmYjY3Zi00NDIwLTRjNDUtODU5OC1kMTJiZjZkOTdiZTgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ0ZXN0MSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiIiwiaHR0cDovLzE3Mi4zMS4xMy4zMDozMDAwIiwiKiIsImh0dHA6Ly8xNzIuMzEuMTMuMzA6NTAwMCJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsicmVxdWlyZV9vdHBfcm9sZSIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXBsYXRmb3JtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsidGVzdDEiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSIsImNsaWVudEhvc3QiOiIxNzIuMzEuMTMuMzAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdGVzdDEiLCJjbGllbnRBZGRyZXNzIjoiMTcyLjMxLjEzLjMwIiwiY2xpZW50X2lkIjoidGVzdDEifQ.s1wBVPiaSZJIRLv7Ky78qzq950VM21Yzo1EZbx0PTj52M0C-ZdLokt7lMesImRMaxkIn7dd2yieRxcZ-HNf78mhQ7E6d2L2836V8OHLqvAlA_nn0Ifj_u_ooAzZn7qdxZLxYoBFhJ1YLcnKr_U45bgzHUk2-SSfmTekv6mhdsZqmIFsCSWq728n9-rzyWZuXKoc9aibxcNeD3lm-TSDylrmgHEz-Z1Au5cz2mNNbkzA5YRmmZv3kZxMOHH4lbn8HuZDq_nxmPabt1FmPfROgrcwcVlAcpm50F2nwyO3UGwQTiwDW5qzLjfJoQ0rUyGoMDeYKiNB7XoEacVil4q58Nw",
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"83abeffb-0afc-4236-a774-9fc489e0afb6\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/getUserKyc"
+			},
+			"response": []
+		},
+		{
+			"name": "pending-kycs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/pending-kycs"
+			},
+			"response": []
+		},
+		{
+			"name": "rejected-kycs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.31.13.30:5000/api/admin/pending-kycs"
+			},
+			"response": []
+		},
+		{
+			"name": "pending-level2",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"tokenType": "Bearer",
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://172.31.13.30:5000/api/admin/pending-level2"
+			},
+			"response": []
+		},
+		{
+			"name": "pending-level3",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": {
+						"tokenType": "Bearer",
+						"clientSecret": "41xGHbhuUcl9ZbwiS8QqstiBjzkZ9jMj",
+						"client_authentication": "header",
+						"accessTokenUrl": "http://172.31.13.30:6060/realms/platform/protocol/openid-connect/token",
+						"clientId": "test1",
+						"tokenName": "test",
+						"scope": " ",
+						"grant_type": "client_credentials",
+						"password": "Aa123456@",
+						"username": "adi",
+						"addTokenTo": "header"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://172.31.13.30:5000/api/admin/pending-level3"
+			},
+			"response": []
+		}
+	]
+}
