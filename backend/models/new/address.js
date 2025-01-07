@@ -13,4 +13,4 @@ const addressSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
-module.exports = mongoose.model('Address', addressSchema);
+module.exports = mongoose.model('Address', addressSchema, 'Address_kyc');

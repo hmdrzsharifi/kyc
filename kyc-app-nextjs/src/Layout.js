@@ -134,12 +134,22 @@ const Layout = ({ children }) => {
                     {/*</ListItem>*/}
                     {/*<Divider />*/}
 
-                    <ListItem button component={Link} href="/upload-documents">
+                    {/*<ListItem button component={Link} href="/upload-documents">*/}
+                    {/*    <ContactMailIcon />*/}
+                    {/*    <ListItemText primary="upload-documents" />*/}
+                    {/*</ListItem>*/}
+                    {/*<Divider />*/}
+
+                    <ListItem button component={Link} href="/level2">
                         <ContactMailIcon />
-                        <ListItemText primary="upload-documents" />
+                        <ListItemText primary="level2" />
                     </ListItem>
                     <Divider />
-
+                    <ListItem button component={Link} href="/level3">
+                        <ContactMailIcon />
+                        <ListItemText primary="level3" />
+                    </ListItem>
+                    <Divider />
                     <ListItem button component={Link} href="/pending-kycs">
                         <ContactMailIcon />
                         <ListItemText primary="pending-kycs" />

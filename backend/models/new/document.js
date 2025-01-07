@@ -15,4 +15,4 @@ const documentSchema = new mongoose.Schema({
     metadata: { type: Object, default: {} },
 });
 
-module.exports = mongoose.model('Document', documentSchema);
+module.exports = mongoose.model('Document', documentSchema , 'Document_kyc');
