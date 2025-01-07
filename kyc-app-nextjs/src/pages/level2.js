@@ -31,6 +31,7 @@ export default function Level2() {
     };
 
     return (
+        <Layout>
         <Box sx={{ maxWidth: 500, margin: "0 auto", padding: 2 }}>
             <Typography variant="h5">Level 2 Verification</Typography>
             <form onSubmit={handleSubmit}>
@@ -62,5 +63,6 @@ export default function Level2() {
             </form>
             {message && <Typography color="error" sx={{ mt: 2 }}>{message}</Typography>}
         </Box>
+        </Layout>
     );
 }
